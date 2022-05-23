@@ -1,0 +1,87 @@
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+const NotFoundError = require('../errors/NotFoundError');
+const ConflictError = require('../errors/ConflictError');
+
+require('dotenv').config();
+
+const { JWT_SECRET = 'JWT_SECRET' } = process.env;
+
+const User = require('../models/user');
+
+module.exports.getMe = (req, res, next) => {
+  const { _id } = req.user;
+  User.find({ _id })
+    .then((user) => {
+      if (!user) {
+        next(new NotFoundError('Пользователь не найден'));
+      }
+      return res.send(...user);
+    })
+    .catch(next);
+};
+
+module.exports.createUser = (req, res, next) => {
+  const { name, about, avatar, email, password } = req.body;
+
+  const createUser = (hash) =>
+    User.create({
+      name,
+      about,
+      avatar,
+      email,
+      password: hash,
+    });
+
+  bcrypt
+    .hash(password, 10)
+    .then((hash) => createUser(hash))
+    .then((user) => {
+      const { _id } = user;
+      res.send({
+        _id,
+        name,
+        about,
+        avatar,
+        email,
+      });
+    })
+    .catch((err) => {
+      if (err.code === 11000) {
+        next(new ConflictError('Пользователь уже существует'));
+      } else next(err);
+    });
+};
+
+module.exports.updateProfile = (req, res, next) => {
+  const { name, about } = req.body;
+
+  User.findByIdAndUpdate(req.user._id, { name, about }, { runValidators: true })
+    .then((user) =>
+      res.send({
+        _id: user._id,
+        avatar: user.avatar,
+        name,
+        about,
+      })
+    )
+    .catch(next);
+};
+
+module.exports.login = (req, res, next) => {
+  const { email, password } = req.body;
+  User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
+        expiresIn: '7d',
+      });
+      res.cookie('jwt', token, {
+        maxAge: 3600000,
+        httpOnly: true,
+        secure: true,
+        sameSite: 'None',
+      });
+      res.send({ token });
+    })
+    .catch(next);
+};
