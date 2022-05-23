@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
@@ -18,6 +19,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(helmet());
 
 // CORS
 
@@ -27,7 +29,7 @@ const allowedCors = [
   'localhost:3000',
   'http://localhost:3000',
   'http://127.0.0.1:3000',
-  /(https|http)?:\/\/(?:www\.|(?!www))front-movies.nomoredomains.work\/[a-z]+\/|[a-z]+\/|[a-z]+(\/|)/,
+  /(https|http)?:\/\/(?:www\.|(?!www))front-movies.nomoredomains.xyz\/[a-z]+\/|[a-z]+\/|[a-z]+(\/|)/,
 ];
 
 app.use((req, res, next) => {

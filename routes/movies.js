@@ -2,7 +2,11 @@ const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
 const { reg } = require('../utils/isLink');
 
-const { getMovies, createMovie, deleteMovie } = require('../controllers/cards');
+const {
+  getMovies,
+  createMovie,
+  deleteMovie,
+} = require('../controllers/movies');
 
 router.get('/', getMovies);
 router.post(
