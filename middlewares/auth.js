@@ -3,7 +3,7 @@ const UnauthorizedError = require('../errors/UnauthorizedError');
 
 require('dotenv').config();
 
-const { JWT_SECRET = 'JWT_SECRET' } = process.env;
+const { JWT_SECRET = 'JWT_SECRET', NODE_ENV } = process.env;
 
 const handleAuthError = (next) => {
   next(new UnauthorizedError('Необходима авторизация'));
@@ -11,7 +11,10 @@ const handleAuthError = (next) => {
 
 const tokenVerify = (token) => {
   try {
-    return jwt.verify(token, JWT_SECRET);
+    return jwt.verify(
+      token,
+      NODE_ENV === 'production' ? JWT_SECRET : 'JWT_SECRET'
+    );
   } catch (err) {
     return '';
   }

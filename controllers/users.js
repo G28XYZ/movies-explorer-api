@@ -5,7 +5,7 @@ const ConflictError = require('../errors/ConflictError');
 
 require('dotenv').config();
 
-const { JWT_SECRET = 'JWT_SECRET' } = process.env;
+const { JWT_SECRET = 'JWT_SECRET', NODE_ENV } = process.env;
 
 const User = require('../models/user');
 
@@ -22,17 +22,16 @@ module.exports.getMe = (req, res, next) => {
 };
 
 module.exports.createUser = (req, res, next) => {
-  const {
-    name, about, avatar, email, password,
-  } = req.body;
+  const { name, about, avatar, email, password } = req.body;
 
-  const createUser = (hash) => User.create({
-    name,
-    about,
-    avatar,
-    email,
-    password: hash,
-  });
+  const createUser = (hash) =>
+    User.create({
+      name,
+      about,
+      avatar,
+      email,
+      password: hash,
+    });
 
   bcrypt
     .hash(password, 10)
@@ -58,12 +57,14 @@ module.exports.updateProfile = (req, res, next) => {
   const { name, about } = req.body;
 
   User.findByIdAndUpdate(req.user._id, { name, about }, { runValidators: true })
-    .then((user) => res.send({
-      _id: user._id,
-      avatar: user.avatar,
-      name,
-      about,
-    }))
+    .then((user) =>
+      res.send({
+        _id: user._id,
+        avatar: user.avatar,
+        name,
+        about,
+      })
+    )
     .catch(next);
 };
 
@@ -71,9 +72,13 @@ module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
   User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
-        expiresIn: '7d',
-      });
+      const token = jwt.sign(
+        { _id: user._id },
+        NODE_ENV === 'production' ? JWT_SECRET : 'JWT_SECRET',
+        {
+          expiresIn: '7d',
+        }
+      );
       res.cookie('jwt', token, {
         maxAge: 3600000,
         httpOnly: true,
@@ -83,4 +88,13 @@ module.exports.login = (req, res, next) => {
       res.send({ token });
     })
     .catch(next);
+};
+
+module.exports.logout = (req, res, next) => {
+  try {
+    res.clearCookie('jwt');
+    return res.send({ message: 'logout - ok!' });
+  } catch (err) {
+    return next(new Error(err));
+  }
 };
