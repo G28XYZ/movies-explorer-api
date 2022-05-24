@@ -60,7 +60,7 @@ module.exports.deleteMovie = (req, res, next) => {
         return removeCard();
       }
       return next(
-        new ForbiddenError('Попытка удалить фильм другого пользователя')
+        new ForbiddenError('Попытка удалить фильм другого пользователя'),
       );
     })
     .catch(next);
