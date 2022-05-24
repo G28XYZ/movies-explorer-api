@@ -5,7 +5,7 @@ const ValidationError = require('../errors/ValidationError');
 
 module.exports.getMovies = (req, res, next) => {
   Movie.find({})
-    .then((cards) => res.send(cards))
+    .then((movies) => res.send(movies))
     .catch(next);
 };
 
@@ -13,7 +13,7 @@ module.exports.createMovie = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
   Movie.create({ name, link, owner })
-    .then((card) => res.send(card))
+    .then((movie) => res.send(movie))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new ValidationError('Некорректные данные при создании фильма'));
