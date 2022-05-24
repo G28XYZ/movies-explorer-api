@@ -90,11 +90,7 @@ module.exports.login = (req, res, next) => {
     .catch(next);
 };
 
-module.exports.logout = (req, res, next) => {
-  try {
-    res.clearCookie('jwt');
-    return res.send({ message: 'logout - ok!' });
-  } catch (err) {
-    return next(new Error(err));
-  }
+module.exports.logout = (req, res) => {
+  res.clearCookie('jwt');
+  return res.send({ message: 'logout - ok!' });
 };
