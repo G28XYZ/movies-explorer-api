@@ -88,3 +88,21 @@ app.use(errorHandler);
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
 });
+
+// {
+//   "email":"aaa@aaa.ru",
+//   "password":"111"
+// }
+
+// {
+//   "country": "rus",
+//   "director": "dir",
+//   "duration": 2,
+//   "year": "2000",
+//   "description": "descr",
+//   "image": "https://oke.com/asfd",
+//   "trailerLink": "https://oke.com/asfd",
+//   "thumbnail": "https://oke.com/asfd",
+//   "nameRU": "ru",
+//   "nameEN": "en"
+// }

@@ -10,9 +10,32 @@ module.exports.getMovies = (req, res, next) => {
 };
 
 module.exports.createMovie = (req, res, next) => {
-  const { name, link } = req.body;
+  const {
+    country,
+    director,
+    duration,
+    year,
+    description,
+    image,
+    trailerLink,
+    thumbnail,
+    nameRU,
+    nameEN,
+  } = req.body;
   const owner = req.user._id;
-  Movie.create({ name, link, owner })
+  Movie.create({
+    country,
+    director,
+    duration,
+    year,
+    description,
+    owner,
+    image,
+    trailerLink,
+    thumbnail,
+    nameRU,
+    nameEN,
+  })
     .then((movie) => res.send(movie))
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -25,15 +48,15 @@ module.exports.createMovie = (req, res, next) => {
 
 module.exports.deleteMovie = (req, res, next) => {
   const removeCard = () => {
-    Movie.findByIdAndRemove(req.params.cardId)
-      .then((card) => res.send(card))
+    Movie.findByIdAndRemove(req.params.movieId)
+      .then((movie) => res.send(movie))
       .catch(next);
   };
 
-  Movie.findById(req.params.cardId)
-    .then((card) => {
-      if (!card) next(new NotFoundError('Фильм не найден'));
-      if (req.user._id === card.owner.toString()) {
+  Movie.findById(req.params.movieId)
+    .then((movie) => {
+      if (!movie) next(new NotFoundError('Фильм не найден'));
+      if (req.user._id === movie.owner.toString()) {
         return removeCard();
       }
       return next(
