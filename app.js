@@ -9,7 +9,7 @@ const errorHandler = require('./errors/errorHandler');
 
 require('dotenv').config();
 
-const { PORT = 3000 } = process.env;
+const { PORT = 3000, DATABASE = 'moviesdb' } = process.env;
 
 const auth = require('./middlewares/auth');
 const NotFoundError = require('./errors/NotFoundError');
@@ -55,7 +55,7 @@ app.use((req, res, next) => {
   return next();
 });
 
-mongoose.connect('mongodb://127.0.0.1:27017/bitfilmsdb', {
+mongoose.connect('mongodb://127.0.0.1:27017/' + DATABASE, {
   useUnifiedTopology: true,
   useNewUrlParser: true,
   autoIndex: true,
