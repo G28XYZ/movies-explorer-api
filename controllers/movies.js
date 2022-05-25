@@ -47,7 +47,7 @@ module.exports.createMovie = (req, res, next) => {
 };
 
 module.exports.deleteMovie = (req, res, next) => {
-  const removeCard = () => {
+  const removeMovie = () => {
     Movie.findByIdAndRemove(req.params.movieId)
       .then((movie) => res.send(movie))
       .catch(next);
@@ -57,7 +57,7 @@ module.exports.deleteMovie = (req, res, next) => {
     .then((movie) => {
       if (!movie) next(new NotFoundError('Фильм не найден'));
       if (req.user._id === movie.owner.toString()) {
-        return removeCard();
+        return removeMovie();
       }
       return next(
         new ForbiddenError('Попытка удалить фильм другого пользователя'),
