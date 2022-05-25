@@ -1,11 +1,18 @@
-const user = require('./users');
+const users = require('./users');
 const movies = require('./movies');
-const auth = require('./auth');
+const authorization = require('./authorization');
+const auth = require('../middlewares/auth');
+const NotFoundError = require('../errors/NotFoundError');
 
-module.exports = function(app) {
-    app.get('/', function() { ... });
-    app.get('/another-path', function() { ... });
+module.exports = function (app) {
+  app.use('/', authorization);
 
-    app.get('/user/:id', user.display);
-    app.post('/user/:id', user.update);
+  app.use(auth);
+
+  app.use('/users', users);
+  app.use('/movies', movies);
+
+  app.all('*', (req, res, next) => {
+    next(new NotFoundError('Неправильный путь'));
+  });
 };

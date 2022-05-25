@@ -11,10 +11,9 @@ require('dotenv').config();
 
 const { PORT = 3000, DATABASE = 'moviesdb' } = process.env;
 
-const auth = require('./middlewares/auth');
-const NotFoundError = require('./errors/NotFoundError');
-
 const app = express();
+const routes = require('./routes');
+const limiter = require('./middlewares/limiter');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -69,20 +68,15 @@ app.use(requestLogger);
 //   }, 0);
 // });
 
-app.use('/', require('./routes/auth'));
+// limiter
+app.use('/', limiter);
 
-app.use(auth);
+// все роуты в index.js
+routes(app);
 
-app.use('/users', require('./routes/users'));
-app.use('/movies', require('./routes/movies'));
-
-app.all('*', (req, res, next) => {
-  next(new NotFoundError('Неправильный путь'));
-});
-
+// обработка ошибок
 app.use(errorLogger);
 app.use(errors());
-
 app.use(errorHandler);
 
 app.listen(PORT, () => {
