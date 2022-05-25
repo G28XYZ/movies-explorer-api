@@ -32,13 +32,12 @@ mongoose.connect(`mongodb://127.0.0.1:27017/${DATABASE}`, {
 
 app.use(requestLogger);
 
-// app.get("/crash-test", () => {
-//   setTimeout(() => {
-//     throw new Error("Сервер сейчас упадёт");
-//   }, 0);
-// });
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
 
-// limiter
 app.use('/', limiter);
 
 // все роуты в index.js
@@ -52,21 +51,3 @@ app.use(errorHandler);
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
 });
-
-// {
-//   "email":"aaa@aaa.ru",
-//   "password":"111"
-// }
-
-// {
-//   "country": "rus",
-//   "director": "dir",
-//   "duration": 2,
-//   "year": "2000",
-//   "description": "descr",
-//   "image": "https://oke.com/asfd",
-//   "trailerLink": "https://oke.com/asfd",
-//   "thumbnail": "https://oke.com/asfd",
-//   "nameRU": "ru",
-//   "nameEN": "en"
-// }

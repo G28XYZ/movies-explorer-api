@@ -13,7 +13,7 @@ const tokenVerify = (token) => {
   try {
     return jwt.verify(
       token,
-      NODE_ENV === 'production' ? JWT_SECRET : 'JWT_SECRET'
+      NODE_ENV === 'production' ? JWT_SECRET : 'JWT_SECRET',
     );
   } catch (err) {
     return '';
