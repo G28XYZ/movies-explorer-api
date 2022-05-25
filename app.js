@@ -36,8 +36,8 @@ app.use((req, res, next) => {
   const { origin } = req.headers;
 
   if (
-    allowedCors.some((e) => e.test && e.test(origin))
-    || allowedCors.includes(origin)
+    allowedCors.some((e) => e.test && e.test(origin)) ||
+    allowedCors.includes(origin)
   ) {
     res.header('Access-Control-Allow-Origin', origin);
     res.header('Access-Control-Allow-Credentials', true);
@@ -55,7 +55,7 @@ app.use((req, res, next) => {
   return next();
 });
 
-mongoose.connect('mongodb://127.0.0.1:27017/' + DATABASE, {
+mongoose.connect(`mongodb://127.0.0.1:27017/${DATABASE}`, {
   useUnifiedTopology: true,
   useNewUrlParser: true,
   autoIndex: true,
