@@ -3,6 +3,10 @@ const isUrl = require('validator/lib/isURL');
 
 const movieSchema = new mongoose.Schema(
   {
+    movieId: {
+      type: Number,
+      required: true,
+    },
     country: {
       type: String,
       required: true,
@@ -61,7 +65,7 @@ const movieSchema = new mongoose.Schema(
       required: true,
     },
   },
-  { versionKey: false },
+  { versionKey: false }
 );
 
 module.exports = mongoose.model('movie', movieSchema);

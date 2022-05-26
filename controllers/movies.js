@@ -11,6 +11,7 @@ module.exports.getMovies = (req, res, next) => {
 
 module.exports.createMovie = (req, res, next) => {
   const {
+    movieId,
     country,
     director,
     duration,
@@ -24,6 +25,7 @@ module.exports.createMovie = (req, res, next) => {
   } = req.body;
   const owner = req.user._id;
   Movie.create({
+    movieId,
     country,
     director,
     duration,
@@ -60,7 +62,7 @@ module.exports.deleteMovie = (req, res, next) => {
         return removeMovie();
       }
       return next(
-        new ForbiddenError('Попытка удалить фильм другого пользователя'),
+        new ForbiddenError('Попытка удалить фильм другого пользователя')
       );
     })
     .catch(next);

@@ -12,6 +12,7 @@ router.post(
   '/',
   celebrate({
     body: Joi.object().keys({
+      movieId: Joi.number().integer().required(),
       country: Joi.string().required(),
       director: Joi.string().required(),
       duration: Joi.number().required(),
@@ -24,7 +25,7 @@ router.post(
       nameEN: Joi.string().required(),
     }),
   }),
-  createMovie,
+  createMovie
 );
 router.delete(
   '/:movieId',
@@ -33,7 +34,7 @@ router.delete(
       movieId: Joi.string().length(24).hex().required(),
     }),
   }),
-  deleteMovie,
+  deleteMovie
 );
 
 module.exports = router;

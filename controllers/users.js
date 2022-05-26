@@ -8,6 +8,7 @@ require('dotenv').config();
 const { JWT_SECRET = 'JWT_SECRET', NODE_ENV } = process.env;
 
 const User = require('../models/user');
+const { find } = require('../models/user');
 
 module.exports.getMe = (req, res, next) => {
   const { _id } = req.user;
@@ -22,17 +23,14 @@ module.exports.getMe = (req, res, next) => {
 };
 
 module.exports.createUser = (req, res, next) => {
-  const {
-    name, about, avatar, email, password,
-  } = req.body;
+  const { name, email, password } = req.body;
 
-  const createUser = (hash) => User.create({
-    name,
-    about,
-    avatar,
-    email,
-    password: hash,
-  });
+  const createUser = (hash) =>
+    User.create({
+      name,
+      email,
+      password: hash,
+    });
 
   bcrypt
     .hash(password, 10)
@@ -42,8 +40,6 @@ module.exports.createUser = (req, res, next) => {
       res.send({
         _id,
         name,
-        about,
-        avatar,
         email,
       });
     })
@@ -55,15 +51,29 @@ module.exports.createUser = (req, res, next) => {
 };
 
 module.exports.updateProfile = (req, res, next) => {
-  const { name, about } = req.body;
+  const { name, email } = req.body;
 
-  User.findByIdAndUpdate(req.user._id, { name, about }, { runValidators: true })
-    .then((user) => res.send({
-      _id: user._id,
-      avatar: user.avatar,
-      name,
-      about,
-    }))
+  const findAndUpdate = () =>
+    User.findByIdAndUpdate(
+      req.user._id,
+      { name, email },
+      { runValidators: true }
+    );
+
+  User.find({ email })
+    .then(([user]) => {
+      if (user && user._id !== req.user._id) {
+        return next(new ConflictError('Email уже зарегистрирован'));
+      }
+      return findAndUpdate();
+    })
+    .then((user) => {
+      console.log(user);
+      res.send({
+        name: name || user.name,
+        email: email || user.email,
+      });
+    })
     .catch(next);
 };
 
@@ -76,7 +86,7 @@ module.exports.login = (req, res, next) => {
         NODE_ENV === 'production' ? JWT_SECRET : 'JWT_SECRET',
         {
           expiresIn: '7d',
-        },
+        }
       );
       res.cookie('jwt', token, {
         maxAge: 3600000,
