@@ -2,20 +2,20 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const NotFoundError = require('../errors/NotFoundError');
 const ConflictError = require('../errors/ConflictError');
+const { errorMessages } = require('../utils/constants');
 
 require('dotenv').config();
 
 const { JWT_SECRET = 'JWT_SECRET', NODE_ENV } = process.env;
 
 const User = require('../models/user');
-const { find } = require('../models/user');
 
 module.exports.getMe = (req, res, next) => {
   const { _id } = req.user;
   User.find({ _id })
     .then((user) => {
       if (!user) {
-        next(new NotFoundError('Пользователь не найден'));
+        next(new NotFoundError(errorMessages.userNotFound));
       }
       return res.send(...user);
     })
@@ -45,7 +45,7 @@ module.exports.createUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.code === 11000) {
-        next(new ConflictError('Пользователь уже существует'));
+        next(new ConflictError(errorMessages.createUser));
       } else next(err);
     });
 };
@@ -62,16 +62,15 @@ module.exports.updateProfile = (req, res, next) => {
 
   User.find({ email })
     .then(([user]) => {
-      if (user && user._id !== req.user._id) {
-        return next(new ConflictError('Email уже зарегистрирован'));
+      if (user && user._id.toString() !== req.user._id) {
+        throw new ConflictError(errorMessages.updateProfile);
       }
       return findAndUpdate();
     })
-    .then((user) => {
-      console.log(user);
+    .then(() => {
       res.send({
-        name: name || user.name,
-        email: email || user.email,
+        name,
+        email,
       });
     })
     .catch(next);
@@ -88,6 +87,7 @@ module.exports.login = (req, res, next) => {
           expiresIn: '7d',
         }
       );
+
       res.cookie('jwt', token, {
         maxAge: 3600000,
         httpOnly: true,

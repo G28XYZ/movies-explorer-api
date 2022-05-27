@@ -7,4 +7,20 @@ const allowedCors = [
   /(https|http)?:\/\/(?:www\.|(?!www))front-movies.nomoredomains.xyz\/[a-z]+\/|[a-z]+\/|[a-z]+(\/|)/,
 ];
 
-module.exports = { allowedCors };
+const errorMessages = {
+  image: 'Некорректный формат ссылки на картинку',
+  trailerLink: 'Некорректный формат ссылки на трейлер',
+  thumbnail: 'Некорректный формат ссылки на постер',
+  createMovie: 'Некорректные данные при создании фильма',
+  movieNotFound: 'Фильм не найден',
+  removeMovie: 'Попытка удалить фильм другого пользователя',
+  userNotFound: 'Пользователь не найден',
+  createUser: 'Пользователь уже существует',
+  updateProfile: 'Email уже зарегистрирован',
+  incorrectData: 'Неправильные почта или пароль',
+  incorrectEmail: 'Некорректный формат почты',
+  incorrectPath: 'Неправильный путь',
+  auth: 'Необходима авторизация',
+};
+
+module.exports = { allowedCors, errorMessages };
