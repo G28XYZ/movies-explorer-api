@@ -50,19 +50,14 @@ module.exports.createMovie = (req, res, next) => {
 };
 
 module.exports.deleteMovie = (req, res, next) => {
-  const removeMovie = () => {
-    Movie.findByIdAndRemove(req.params._id)
-      .then((movie) => res.send(movie))
-      .catch(next);
-  };
-
   Movie.findById(req.params._id)
     .then((movie) => {
       if (!movie) next(new NotFoundError(errorMessages.movieNotFound));
       if (req.user._id === movie.owner.toString()) {
-        return removeMovie();
+        return movie.remove();
       }
       return next(new ForbiddenError(errorMessages.removeMovie));
     })
+    .then((movie) => res.send(movie))
     .catch(next);
 };
