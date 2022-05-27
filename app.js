@@ -9,8 +9,7 @@ const errorHandler = require('./errors/errorHandler');
 
 require('dotenv').config();
 
-const { PORT = 3000, DATABASE = 'mongodb://127.0.0.1:27017/moviesdb' } =
-  process.env;
+const { PORT = 3000, DATABASE = 'mongodb://127.0.0.1:27017/moviesdb' } = process.env;
 
 const app = express();
 const routes = require('./routes');

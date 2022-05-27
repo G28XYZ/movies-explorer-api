@@ -25,12 +25,11 @@ module.exports.getMe = (req, res, next) => {
 module.exports.createUser = (req, res, next) => {
   const { name, email, password } = req.body;
 
-  const createUser = (hash) =>
-    User.create({
-      name,
-      email,
-      password: hash,
-    });
+  const createUser = (hash) => User.create({
+    name,
+    email,
+    password: hash,
+  });
 
   bcrypt
     .hash(password, 10)
@@ -53,12 +52,11 @@ module.exports.createUser = (req, res, next) => {
 module.exports.updateProfile = (req, res, next) => {
   const { name, email } = req.body;
 
-  const findAndUpdate = () =>
-    User.findByIdAndUpdate(
-      req.user._id,
-      { name, email },
-      { runValidators: true }
-    );
+  const findAndUpdate = () => User.findByIdAndUpdate(
+    req.user._id,
+    { name, email },
+    { runValidators: true },
+  );
 
   User.find({ email })
     .then(([user]) => {
@@ -85,7 +83,7 @@ module.exports.login = (req, res, next) => {
         NODE_ENV === 'production' ? JWT_SECRET : 'JWT_SECRET',
         {
           expiresIn: '7d',
-        }
+        },
       );
 
       res.cookie('jwt', token, {
