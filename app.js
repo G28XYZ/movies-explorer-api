@@ -9,12 +9,14 @@ const errorHandler = require('./errors/errorHandler');
 
 require('dotenv').config();
 
-const { PORT = 3000, DATABASE = 'moviesdb' } = process.env;
+const { PORT = 3000, DATABASE = 'mongodb://127.0.0.1:27017/moviesdb' } =
+  process.env;
 
 const app = express();
 const routes = require('./routes');
 const limiter = require('./middlewares/limiter');
 const cors = require('./middlewares/cors');
+const { errorMessages } = require('./utils/constants');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -24,7 +26,7 @@ app.use(helmet());
 // CORS
 app.use(cors);
 
-mongoose.connect(`mongodb://127.0.0.1:27017/${DATABASE}`, {
+mongoose.connect(DATABASE, {
   useUnifiedTopology: true,
   useNewUrlParser: true,
   autoIndex: true,
@@ -34,7 +36,7 @@ app.use(requestLogger);
 
 app.get('/crash-test', () => {
   setTimeout(() => {
-    throw new Error('Сервер сейчас упадёт');
+    throw new Error(errorMessages.crash);
   }, 0);
 });
 

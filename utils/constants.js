@@ -21,6 +21,7 @@ const errorMessages = {
   incorrectEmail: 'Некорректный формат почты',
   incorrectPath: 'Неправильный путь',
   auth: 'Необходима авторизация',
+  crash: 'Сервер сейчас упадёт',
 };
 
 module.exports = { allowedCors, errorMessages };
