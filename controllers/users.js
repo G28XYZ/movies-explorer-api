@@ -98,6 +98,12 @@ module.exports.login = (req, res, next) => {
 };
 
 module.exports.logout = (req, res) => {
+  res.cookie('jwt', '', {
+        maxAge: 0,
+        httpOnly: true,
+        secure: true,
+        sameSite: 'None',
+  });
   res.clearCookie('jwt');
   return res.send({ message: 'logout - ok!' });
 };
