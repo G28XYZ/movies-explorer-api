@@ -31,7 +31,7 @@ module.exports.createUser = (req, res, next) => {
     password: hash,
   });
 
-  const findOne = (hash) => User.findOne({email}).then((user) => {user, hash})
+  const findOne = (hash) => User.findOne({email}).then((user) => ({user, hash}))
 
   bcrypt
     .hash(password, 10)
@@ -43,7 +43,6 @@ module.exports.createUser = (req, res, next) => {
       return createUser(hash)
     })
     .then((user) => {
-      console.log(user)
       const { _id } = user;
       res.send({
         _id,
