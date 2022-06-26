@@ -31,14 +31,12 @@ app.use(cors);
 
 client.connect();
 
-client.query(`CREATE TABLE user(
+await client.query(`CREATE TABLE user(
   _id SERIAL PRIMARY KEY,
   name VARCHAR(30),
   email VARCHAR(80),
   password VARCHAR(30)
 );`);
-
-client.query('SELECT * FROM user');
 
 app.use(requestLogger);
 
