@@ -30,12 +30,15 @@ app.use(helmet());
 app.use(cors);
 
 client.connect();
-console.log(client);
-// mongoose.connect(DATABASE, {
-//   useUnifiedTopology: true,
-//   useNewUrlParser: true,
-//   autoIndex: true,
-// });
+
+client.query(`CREATE TABLE user(
+  _id SERIAL PRIMARY KEY,
+  name VARCHAR(30),
+  email VARCHAR(80),
+  password VARCHAR(30)
+)`);
+
+client.query('SELECT * FROM user');
 
 app.use(requestLogger);
 
