@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const pg = require('pg');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
@@ -9,9 +10,12 @@ const errorHandler = require('./errors/errorHandler');
 
 require('dotenv').config();
 
-const { PORT = 3000, DATABASE = 'mongodb://127.0.0.1:27017/moviesdb' } = process.env;
+const { PORT = 3000, DATABASE_URI } = process.env;
 
 const app = express();
+const client = new pg.Client({
+  connectionString: DATABASE_URI,
+});
 const routes = require('./routes');
 const limiter = require('./middlewares/limiter');
 const cors = require('./middlewares/cors');
@@ -25,11 +29,12 @@ app.use(helmet());
 // CORS
 app.use(cors);
 
-mongoose.connect(DATABASE, {
-  useUnifiedTopology: true,
-  useNewUrlParser: true,
-  autoIndex: true,
-});
+client.connect();
+// mongoose.connect(DATABASE, {
+//   useUnifiedTopology: true,
+//   useNewUrlParser: true,
+//   autoIndex: true,
+// });
 
 app.use(requestLogger);
 
