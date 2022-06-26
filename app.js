@@ -31,7 +31,7 @@ app.use(cors);
 
 client.connect();
 
-await client.query(`CREATE TABLE user(
+client.query(`CREATE TABLE user(
   _id SERIAL PRIMARY KEY,
   name VARCHAR(30),
   email VARCHAR(80),
