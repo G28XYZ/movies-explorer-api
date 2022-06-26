@@ -30,6 +30,7 @@ app.use(helmet());
 app.use(cors);
 
 client.connect();
+console.log(client);
 // mongoose.connect(DATABASE, {
 //   useUnifiedTopology: true,
 //   useNewUrlParser: true,
