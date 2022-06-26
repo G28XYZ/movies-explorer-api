@@ -31,12 +31,16 @@ app.use(cors);
 
 client.connect();
 
-client.query(`CREATE TABLE user(
+const userTable = `
+CREATE TEMP TABLE user(
   _id SERIAL PRIMARY KEY,
   name VARCHAR(30),
   email VARCHAR(80),
   password VARCHAR(30)
-);`);
+);
+`;
+
+client.query(userTable);
 
 app.use(requestLogger);
 
