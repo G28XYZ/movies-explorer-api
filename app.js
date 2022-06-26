@@ -36,9 +36,9 @@ client.query(`CREATE TABLE user(
   name VARCHAR(30),
   email VARCHAR(80),
   password VARCHAR(30)
-)`);
+);`);
 
-client.query('SELECT * FROM user');
+client.query('SELECT * FROM user;');
 
 app.use(requestLogger);
 
