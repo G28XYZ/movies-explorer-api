@@ -33,10 +33,9 @@ client.connect();
 
 const userTable = `
 CREATE TEMP TABLE user(
-  _id SERIAL PRIMARY KEY,
-  name VARCHAR(30),
-  email VARCHAR(80),
-  password VARCHAR(30)
+  date_col DATE,
+  timestamp_col TIMESTAMP,
+  timestamptz_col TIMESTAMPTZ
 );
 `;
 
