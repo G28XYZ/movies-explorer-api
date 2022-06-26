@@ -29,8 +29,6 @@ app.use(helmet());
 // CORS
 app.use(cors);
 
-client.connect();
-
 const userTable = `
 CREATE TEMP TABLE user(
   date_col DATE,
@@ -40,6 +38,8 @@ CREATE TEMP TABLE user(
 `;
 
 client.query(userTable);
+
+client.connect();
 
 app.use(requestLogger);
 
