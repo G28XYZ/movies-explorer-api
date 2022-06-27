@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const NotFoundError = require('../errors/NotFoundError');
 const ConflictError = require('../errors/ConflictError');
 const { errorMessages } = require('../utils/constants');
+const db = require('../db');
 
 require('dotenv').config();
 
@@ -22,49 +23,58 @@ module.exports.getMe = (req, res, next) => {
     .catch(next);
 };
 
-module.exports.createUser = (req, res, next) => {
+module.exports.createUser = async (req, res, next) => {
   const { name, email, password } = req.body;
 
-  const createUser = (hash) => User.create({
-    name,
-    email,
-    password: hash,
-  });
+  const newUser = await db.query(
+    'INSERT INTO person (name, email, password) values ($1, $2) RETURNING *',
+    [name, email, password]
+  );
+  res.json(newUser.rows[0]);
 
-  const findOne = (hash) => User.findOne({email}).then((user) => ({user, hash}))
+  // const createUser = (hash) =>
+  //   User.create({
+  //     name,
+  //     email,
+  //     password: hash,
+  //   });
 
-  bcrypt
-    .hash(password, 10)
-    .then(findOne)
-    .then(({user, hash}) => {
-      if(user) {
-        throw new ConflictError(errorMessages.createUser)
-      }
-      return createUser(hash)
-    })
-    .then((user) => {
-      const { _id } = user;
-      res.send({
-        _id,
-        name,
-        email,
-      });
-    })
-    .catch((err) => {
-      if (err.code === 11000) {
-        next(new ConflictError(errorMessages.createUser));
-      } else next(err);
-    });
+  // const findOne = (hash) =>
+  //   User.findOne({ email }).then((user) => ({ user, hash }));
+
+  // bcrypt
+  //   .hash(password, 10)
+  //   .then(findOne)
+  //   .then(({ user, hash }) => {
+  //     if (user) {
+  //       throw new ConflictError(errorMessages.createUser);
+  //     }
+  //     return createUser(hash);
+  //   })
+  //   .then((user) => {
+  //     const { _id } = user;
+  //     res.send({
+  //       _id,
+  //       name,
+  //       email,
+  //     });
+  //   })
+  //   .catch((err) => {
+  //     if (err.code === 11000) {
+  //       next(new ConflictError(errorMessages.createUser));
+  //     } else next(err);
+  //   });
 };
 
 module.exports.updateProfile = (req, res, next) => {
   const { name, email } = req.body;
 
-  const findAndUpdate = () => User.findByIdAndUpdate(
-    req.user._id,
-    { name, email },
-    { runValidators: true },
-  );
+  const findAndUpdate = () =>
+    User.findByIdAndUpdate(
+      req.user._id,
+      { name, email },
+      { runValidators: true }
+    );
 
   User.find({ email })
     .then(([user]) => {
@@ -91,7 +101,7 @@ module.exports.login = (req, res, next) => {
         NODE_ENV === 'production' ? JWT_SECRET : 'JWT_SECRET',
         {
           expiresIn: '7d',
-        },
+        }
       );
 
       res.cookie('jwt', token, {
@@ -107,10 +117,10 @@ module.exports.login = (req, res, next) => {
 
 module.exports.logout = (req, res) => {
   res.cookie('jwt', '', {
-        maxAge: 0,
-        httpOnly: true,
-        secure: true,
-        sameSite: 'None',
+    maxAge: 0,
+    httpOnly: true,
+    secure: true,
+    sameSite: 'None',
   });
   res.clearCookie('jwt');
   return res.send({ message: 'logout - ok!' });

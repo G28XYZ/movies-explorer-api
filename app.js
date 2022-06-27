@@ -1,21 +1,17 @@
 const express = require('express');
-const mongoose = require('mongoose');
-const pg = require('pg');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const db = require('./db');
 const errorHandler = require('./errors/errorHandler');
 
 require('dotenv').config();
 
-const { PORT = 3000, DATABASE_URI } = process.env;
+const { PORT = 3000 } = process.env;
 
 const app = express();
-const client = new pg.Client({
-  connectionString: DATABASE_URI,
-});
 const routes = require('./routes');
 const limiter = require('./middlewares/limiter');
 const cors = require('./middlewares/cors');
@@ -29,17 +25,8 @@ app.use(helmet());
 // CORS
 app.use(cors);
 
-const userTable = `
-CREATE TEMP TABLE user(
-  date_col DATE,
-  timestamp_col TIMESTAMP,
-  timestamptz_col TIMESTAMPTZ
-);
-`;
-
-client.query(userTable);
-
-client.connect();
+// DB connect
+db.connect();
 
 app.use(requestLogger);
 
