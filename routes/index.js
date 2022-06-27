@@ -8,7 +8,7 @@ const { errorMessages } = require('../utils/constants');
 module.exports = function (app) {
   app.use('/', authorization);
 
-  app.use(auth);
+  // app.use(auth);
 
   app.use('/users', users);
   app.use('/movies', movies);
