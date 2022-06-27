@@ -11,8 +11,11 @@ require('dotenv').config();
 
 // const User = require('../models/user');
 
-module.exports.getMe = (req, res, next) => {
+module.exports.getMe = async (req, res, next) => {
   const { _id } = req.user;
+
+  const me = await db.query('SELECT * FROM person');
+  res.json(me.rows);
   // User.find({ _id })
   //   .then((user) => {
   //     if (!user) {
