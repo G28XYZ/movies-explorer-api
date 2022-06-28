@@ -1,8 +1,8 @@
-create TABLE user(
-  _id SERIAL PRIMARY KEY,
+create TABLE person(
+  _id UUID PRIMARY KEY,
   name VARCHAR(30),
   email VARCHAR(80),
-  password VARCHAR(30)
+  password VARCHAR(255)
 );
 
 create TABLE movie(
@@ -15,7 +15,7 @@ create TABLE movie(
   image VARCHAR(512),
   trailer_link VARCHAR(512),
   thumbnail VARCHAR(512),
-  owner SERIAL PRIMARY KEY,
+  owner UUID PRIMARY KEY,
   FOREIGN KEY (owner) REFERENCES person(_id),
   name_ru VARCHAR(80),
   name_en VARCHAR(80)
