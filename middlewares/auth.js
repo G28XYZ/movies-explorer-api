@@ -14,7 +14,7 @@ const tokenVerify = (token) => {
   try {
     return jwt.verify(
       token,
-      NODE_ENV === 'production' ? JWT_SECRET : 'JWT_SECRET',
+      NODE_ENV === 'production' ? JWT_SECRET : 'JWT_SECRET'
     );
   } catch (err) {
     return '';
@@ -23,7 +23,6 @@ const tokenVerify = (token) => {
 
 module.exports = (req, res, next) => {
   const token = req.cookies.jwt;
-
   if (!token) {
     return handleAuthError(next);
   }

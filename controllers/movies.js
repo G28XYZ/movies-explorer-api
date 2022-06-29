@@ -1,4 +1,4 @@
-const Movie = require('../models/movie');
+const Movie = require('../database/Movie');
 const NotFoundError = require('../errors/NotFoundError');
 const ForbiddenError = require('../errors/ForbiddenError');
 const ValidationError = require('../errors/ValidationError');
@@ -12,21 +12,22 @@ module.exports.getMovies = (req, res, next) => {
 
 module.exports.createMovie = (req, res, next) => {
   const {
-    movieId,
+    movieId: movie_id,
     country,
     director,
     duration,
     year,
     description,
     image,
-    trailerLink,
+    trailerLink: trailer_link,
     thumbnail,
-    nameRU,
-    nameEN,
+    nameRU: name_ru,
+    nameEN: name_en,
   } = req.body;
   const owner = req.user._id;
+
   Movie.create({
-    movieId,
+    movie_id,
     country,
     director,
     duration,
@@ -34,12 +35,14 @@ module.exports.createMovie = (req, res, next) => {
     description,
     owner,
     image,
-    trailerLink,
+    trailer_link,
     thumbnail,
-    nameRU,
-    nameEN,
+    name_ru,
+    name_en,
   })
-    .then((movie) => res.send(movie))
+    .then((movie) => {
+      res.send(movie);
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new ValidationError(errorMessages.createMovie));
@@ -54,7 +57,8 @@ module.exports.deleteMovie = (req, res, next) => {
     .then((movie) => {
       if (!movie) next(new NotFoundError(errorMessages.movieNotFound));
       if (req.user._id === movie.owner.toString()) {
-        return movie.remove();
+        movie.remove();
+        return movie;
       }
       return next(new ForbiddenError(errorMessages.removeMovie));
     })

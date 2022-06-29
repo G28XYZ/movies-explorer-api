@@ -1,5 +1,7 @@
 const db = require('./db');
-
+const bcrypt = require('bcryptjs');
+const UnauthorizedError = require('../errors/UnauthorizedError');
+const { errorMessages } = require('../utils/constants');
 class User {
   async create(userData) {
     const { name, password, email } = userData;
@@ -39,6 +41,43 @@ class User {
         console.log(err);
         return Promise.resolve(null);
       }
+    }
+  }
+
+  async findByIdAndUpdate(_id, userData) {
+    const { name, email } = userData;
+    try {
+      await db.query(
+        `UPDATE person SET name = $1, email = $2 where _id = $3 RETURNING *`,
+        [name, email, _id]
+      );
+      return Promise.resolve({ name, email, _id });
+    } catch (err) {
+      console.log(err);
+      return Promise.resolve(null);
+    }
+  }
+
+  async findUserByCredentials(email, password) {
+    let user;
+    try {
+      user = await this._findOne(email, 'email');
+      user = user.rows[0];
+      if (!user) {
+        return Promise.reject(
+          new UnauthorizedError(errorMessages.incorrectData)
+        );
+      }
+      const matched = await bcrypt.compare(password, user.password);
+      if (!matched) {
+        return Promise.reject(
+          new UnauthorizedError(errorMessages.incorrectData)
+        );
+      }
+      return user;
+    } catch (err) {
+      console.log(err);
+      return Promise.reject(new UnauthorizedError(errorMessages.incorrectData));
     }
   }
 }

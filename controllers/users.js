@@ -3,7 +3,6 @@ const bcrypt = require('bcryptjs');
 const NotFoundError = require('../errors/NotFoundError');
 const ConflictError = require('../errors/ConflictError');
 const { errorMessages } = require('../utils/constants');
-const db = require('../database/db');
 const User = require('../database/User');
 
 require('dotenv').config();
@@ -69,45 +68,49 @@ module.exports.updateProfile = (req, res, next) => {
       }
       return findAndUpdate();
     })
-    .then(() => {
-      res.send({
-        name,
-        email,
-      });
+    .then((user) => {
+      if (user) {
+        res.send({
+          name,
+          email,
+        });
+      } else {
+        throw new Error('Error update user');
+      }
     })
     .catch(next);
 };
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
-  // User.findUserByCredentials(email, password)
-  //   .then((user) => {
-  //     const token = jwt.sign(
-  //       { _id: user._id },
-  //       NODE_ENV === 'production' ? JWT_SECRET : 'JWT_SECRET',
-  //       {
-  //         expiresIn: '7d',
-  //       }
-  //     );
+  User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign(
+        { _id: user._id },
+        NODE_ENV === 'production' ? JWT_SECRET : 'JWT_SECRET',
+        {
+          expiresIn: '7d',
+        }
+      );
 
-  //     res.cookie('jwt', token, {
-  //       maxAge: 3600000,
-  //       httpOnly: true,
-  //       secure: true,
-  //       sameSite: 'None',
-  //     });
-  //     res.send({ token });
-  //   })
-  //   .catch(next);
+      res.cookie('jwt', token, {
+        maxAge: 3600000,
+        httpOnly: true,
+        secure: true,
+        sameSite: 'None',
+      });
+      res.send({ token });
+    })
+    .catch(next);
 };
 
 module.exports.logout = (req, res) => {
-  // res.cookie('jwt', '', {
-  //   maxAge: 0,
-  //   httpOnly: true,
-  //   secure: true,
-  //   sameSite: 'None',
-  // });
-  // res.clearCookie('jwt');
-  // return res.send({ message: 'logout - ok!' });
+  res.cookie('jwt', '', {
+    maxAge: 0,
+    httpOnly: true,
+    secure: true,
+    sameSite: 'None',
+  });
+  res.clearCookie('jwt');
+  return res.send({ message: 'logout - ok!' });
 };

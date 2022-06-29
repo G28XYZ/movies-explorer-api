@@ -6,17 +6,18 @@ create TABLE person(
 );
 
 create TABLE movie(
+  _id UUID PRIMARY KEY,
   movie_id INTEGER,
-  country VARCHAR(30),
-  director VARCHAR(80),
+  country TEXT,
+  director TEXT,
   duration INTEGER,
   year VARCHAR(30),
-  description VARCHAR(255),
-  image VARCHAR(512),
-  trailer_link VARCHAR(512),
-  thumbnail VARCHAR(512),
-  owner UUID PRIMARY KEY,
+  description TEXT,
+  image TEXT,
+  trailer_link TEXT,
+  thumbnail TEXT,
+  owner UUID,
   FOREIGN KEY (owner) REFERENCES person(_id),
-  name_ru VARCHAR(80),
-  name_en VARCHAR(80)
+  name_ru TEXT,
+  name_en TEXT
 );

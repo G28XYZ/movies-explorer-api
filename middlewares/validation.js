@@ -33,7 +33,7 @@ module.exports.validationPostMovie = celebrate({
 
 module.exports.validationDeleteMovie = celebrate({
   params: Joi.object().keys({
-    _id: Joi.string().length(24).hex().required(),
+    _id: Joi.string().length(36).uuid().required(),
   }),
 });
 

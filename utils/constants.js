@@ -2,9 +2,11 @@ const allowedCors = [
   'https://praktikum.tk',
   'http://praktikum.tk',
   'localhost:3000',
+  'localhost:3001',
   'http://localhost:3000',
   'http://127.0.0.1:3000',
   /(https|http)?:\/\/(?:www\.|(?!www))front-movies.nomoredomains.xyz\/[a-z]+\/|[a-z]+\/|[a-z]+(\/|)/,
+  /(https|http)?:\/\/(?:www\.|(?!www))quiet-bastion-63497.herokuapp.com\/[a-z]+\/|[a-z]+\/|[a-z]+(\/|)/,
 ];
 
 const errorMessages = {
