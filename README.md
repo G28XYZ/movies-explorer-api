@@ -16,7 +16,7 @@
   Express <img style="width: 3%" src="https://github.com/github/explore/blob/main/topics/express/express.png" alt="Express">
   </li>
   <li>
-  MongoDB/PostgeSQL
+  MongoDB/PostgreSQL
   </li>
   <li>
   Nginx <img style="width: 3%" src="https://github.com/github/explore/blob/main/topics/nginx/nginx.png" alt="Nginx">
